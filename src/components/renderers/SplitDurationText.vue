@@ -2,6 +2,7 @@
 
 import { computed } from 'vue';
 
+import type { FormatDurationOptions } from 'date-fns';
 import { 
     differenceInCalendarDays,
     differenceInCalendarWeeks,
@@ -23,19 +24,41 @@ const now = Date();
 
 
 const duration = computed(() => {
-    let duration = intervalToDuration({
+    const d = intervalToDuration({
         start: props.chron.start,
         end: props.chron.end
     });
-    return duration;
+    return d;
+});
+const durationDone = computed(() => {
+    const d = intervalToDuration({
+        start: props.chron.start,
+        end: now,
+    });
+    return d;
+});
+const durationLeft = computed(() => {
+    const d = intervalToDuration({
+        start: now,
+        end: props.chron.end,
+    });
+    return d;
 });
 
 
+// 'formatDuration' formats a length of time, and it uses a format object
+const durationFmt: FormatDurationOptions = {
+    format: ['years', 'months', 'days']
+};
+const durationStr = computed(() => formatDuration(duration.value, durationFmt));
+const durationDoneStr = computed(() => formatDuration(durationDone.value, durationFmt));
+const durationLeftStr = computed(() => formatDuration(durationLeft.value, durationFmt));
+
+// regular old 'format' is for a single day, and so it uses a format string
 const dateFmt = `MMMM do, yyyy`;
-const durationStr = formatDuration(duration.value);
-const startStr = format(props.chron.start, dateFmt);
-const endStr = format(props.chron.end, dateFmt);
-const nowStr = format(now, dateFmt);
+const startStr = computed(() => format(props.chron.start, dateFmt));
+const endStr = computed(() => format(props.chron.end, dateFmt));
+const nowStr = computed(() => format(now, dateFmt));
 
 
 const percent = computed(() => {
@@ -121,7 +144,13 @@ export default {
                 <em>End</em> <span>{{ endStr }}</span>
             </li>
             <li>
-                <em>Duration</em> <span>{{ durationStr }}</span>
+                <em>Duration Total</em> <span>{{ durationStr }}</span>
+            </li>
+            <li>
+                <em>Duration Done</em> <span>{{ durationDoneStr }}</span>
+            </li>
+            <li>
+                <em>Duration Left</em> <span>{{ durationLeftStr }}</span>
             </li>
             <li>
                 <strong>Today</strong> <span>{{ nowStr }}</span>
