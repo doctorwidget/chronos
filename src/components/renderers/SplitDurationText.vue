@@ -8,6 +8,8 @@ import {
     differenceInCalendarMonths,
     differenceInCalendarYears,
     differenceInSeconds,
+    format,
+    formatDuration,
     intervalToDuration,
  } from 'date-fns';
 
@@ -19,12 +21,22 @@ const props = defineProps<{
 
 const now = Date();
 
+
 const duration = computed(() => {
-    return intervalToDuration({
+    let duration = intervalToDuration({
         start: props.chron.start,
         end: props.chron.end
     });
+    return duration;
 });
+
+
+const dateFmt = `MMMM do, yyyy`;
+const durationStr = formatDuration(duration.value);
+const startStr = format(props.chron.start, dateFmt);
+const endStr = format(props.chron.end, dateFmt);
+const nowStr = format(now, dateFmt);
+
 
 const percent = computed(() => {
     const secondsDone = differenceInSeconds(now, props.chron.start);
@@ -45,6 +57,18 @@ const yearsLeft = computed(() => {
 
 const yearsTotal = computed(() =>{
     return differenceInCalendarYears(props.chron.end, props.chron.start);
+});
+
+const monthsDone = computed (() => {
+    return differenceInCalendarMonths(now, props.chron.start);
+});
+
+const monthsLeft = computed(() => {
+    return differenceInCalendarMonths(props.chron.end, now);
+});
+
+const monthsTotal = computed(() =>{
+    return differenceInCalendarMonths(props.chron.end, props.chron.start);
 });
 
 const weeksDone = computed (() => {
@@ -91,13 +115,16 @@ export default {
         <h2>{{ props.chron.title }}</h2>
         <ul>
             <li>
-                <em>Start</em> <span>{{ props.chron.start }}</span>
+                <em>Start</em> <span>{{ startStr }}</span>
             </li>
             <li>
-                <em>End</em> <span>{{ props.chron.end }}</span>
+                <em>End</em> <span>{{ endStr }}</span>
             </li>
             <li>
-                <em>Duration</em> <span>{{ duration }}</span>
+                <em>Duration</em> <span>{{ durationStr }}</span>
+            </li>
+            <li>
+                <strong>Today</strong> <span>{{ nowStr }}</span>
             </li>
             <li :class="$style.big">
                 <strong>Percent</strong> <span>{{ percent }}%</span>
@@ -122,6 +149,12 @@ export default {
                 <td>{{ weeksDone }}</td>
                 <td>{{ weeksLeft }}</td>
                 <td>{{ weeksTotal }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Months</th>
+                <td>{{ monthsDone }}</td>
+                <td>{{ monthsLeft }}</td>
+                <td>{{ monthsTotal }}</td>
             </tr>
             <tr>
                 <th scope="row">Years</th>
