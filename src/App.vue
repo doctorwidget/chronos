@@ -30,7 +30,7 @@ import './assets/chrons.css';
  * If there is no child component that needs to both read AND write,
  * then you probably are not gaining anything by using v-model. 
  */
- const targetAge = defineModel({
+const targetAge = defineModel({
     default: "62",
 });
 
@@ -69,7 +69,7 @@ const chrons: Ref<Array<Chron>> = computed(() => {
 
 <template>
     <div :class="$style.root">
-        <div>
+        <div :class="$style.targetAge">
             <strong>Target Age: </strong>
             <span>
                 <input type="radio" id="a62" value="62" v-model.number="targetAge" />
@@ -87,5 +87,12 @@ const chrons: Ref<Array<Chron>> = computed(() => {
 .root {
     width: 100%;
     min-width: 100%;
+    position: relative;
+}
+
+.targetAge {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 </style>

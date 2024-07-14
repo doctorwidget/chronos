@@ -1,3 +1,31 @@
+<!--
+This should eventually be split up into at least four components:
+
+1. this top level renderer, SplitDuration
+2. a SplitDurationSummary.vue component, handling the <list> of universal text value
+3. a SplitDurationTable.vue component, rendering the original table
+4. a SplitDurationDonut.vue component, rendering a D3 donut view. 
+
+And then we would watch the renderStyle ref and use either the table or donut
+renderer, depending on what the user just choice. While we're at it, we should
+sure use <component :is...> instead of the current [v-if] approach. 
+
+Also, the "style" value is currently managed as in-component local state. 
+It would be better to move that elsewhere and pass it in as a prop. 
+
+Finally, I'd like the remaining SplitDuration.vue file to be even shorter, 
+We probably should create a new util file, which imports and uses all of
+the various date-fns methods. There should be one main exported helper function
+that can be called whenever either date changes; it should return a single
+object with values for all 12 cells of the table, with human-friendly keys. 
+And in the util file, obviously we should just have a function that decides 
+which of the `differenceFoo` methods to call based on an input argument. 
+
+...but it's too early to do any of that now. 
+For now, we remain a wordy proof-of-concept, 
+and that's perfectly OK!
+-->
+
 <script setup lang="ts">
 
 import { computed } from 'vue';
@@ -20,8 +48,14 @@ const props = defineProps<{
     chron: Required<Chron>,
  }>();
 
-const now = Date();
 
+ /** more use of the v-model macro, new in Vue 3.4 */
+ type RenderStyle = 'table' | 'donut';
+ const renderStyle = defineModel<RenderStyle, string>({
+    default: "table",
+});
+
+const now = Date();
 
 const duration = computed(() => {
     const d = intervalToDuration({
@@ -136,7 +170,9 @@ export default {
 <template>
     <div :class="$style.splitDuration">
         <h2>{{ props.chron.title }}</h2>
-        <ul>
+
+        <!-- summary list: refactor me to a component -->
+        <ul :class="$style.summary">
             <li>
                 <em>Start</em> <span>{{ startStr }}</span>
             </li>
@@ -144,23 +180,32 @@ export default {
                 <em>End</em> <span>{{ endStr }}</span>
             </li>
             <li>
-                <em>Duration Total</em> <span>{{ durationStr }}</span>
+                <em>Total time</em> <span>{{ durationStr }}</span>
             </li>
             <li>
-                <em>Duration Done</em> <span>{{ durationDoneStr }}</span>
+                <em>Time done</em> <span>{{ durationDoneStr }}</span>
             </li>
             <li>
-                <em>Duration Left</em> <span>{{ durationLeftStr }}</span>
-            </li>
-            <li>
-                <strong>Today</strong> <span>{{ nowStr }}</span>
+                <em>Time Left</em> <span>{{ durationLeftStr }}</span>
             </li>
             <li :class="$style.big">
-                <strong>Percent</strong> <span>{{ percent }}%</span>
+                <em>Percent</em> <span>{{ percent }}%</span>
             </li>
         </ul>
-        <table :class="$style.unitTable">
-            <caption>By Units</caption>
+        <div>
+            <strong>Render style: </strong>
+            <span>
+                <input type="radio" id="styleTable" value="table" v-model="renderStyle" />
+                <label for="styleTable">Table</label>
+
+                <input type="radio" id="styleDonut" value="donut" v-model="renderStyle" />
+                <label for="donut">Donut</label>
+            </span>
+        </div>
+
+        <!-- table style: refactor me to a component -->
+        <table :class="$style.unitTable" v-if="renderStyle==='table'">
+            <caption>{{ endStr }}</caption>
             <tr>
                 <th scope="col">Units</th>
                 <th scope="col">Done</th>
@@ -191,8 +236,17 @@ export default {
                 <td>{{ yearsLeft }}</td>
                 <td>{{ yearsTotal }}</td>
             </tr>
-
         </table>
+
+        <!-- donut style; refactor me to a component -->
+        <div v-if="renderStyle==='donut'">
+            <h2>Donut style</h2>
+            <div>Coming soon!</div>
+            <svg :class="$style.donut" width="400" height="400">
+                <!-- Actual SVG paths, shapes, etc. here -->
+                <path d="M150 0 L75 200 L225 200 Z" />
+            </svg>
+        </div>
     </div>
 </template>
 
@@ -227,4 +281,29 @@ tr td:nth-child(4) {
     background-color: paleturquoise;
 }
 
+.summary {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.summary li {
+    display: inline-block;
+    width: 250px;
+    min-width: 250px;
+    padding: 1rem;
+    border: 1px dotted navajowhite;
+}
+
+.summary li em {
+    font-weight: bold;
+    font-family: monospace;
+    color: navajowhite;
+}
+.summary li > span {
+    font-size: small;
+}
+
+svg.donut {
+    background-color: white;
+}
 </style>
