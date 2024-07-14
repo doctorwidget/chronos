@@ -1,17 +1,27 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+
+import type { Chron } from './data/chrontypes';
+import ChronViews from './components/ChronViews.vue';
+
+/** inline our custom styles */
+import './assets/chrons.css';
+
+const chrons: Array<Chron> = [
+    {
+        name: 'SplitDuration',
+        start: new Date('2016-05-16T12:00:00'),
+        end: new Date('2029-08-27T12:00:00'),
+        title: 'Time to retirement'
+    },
+    {
+        name: 'Countup',
+    }
+];
+
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+    <ChronViews :title="'chronomancy'" :chrons="chrons"></ChronViews>   
 </template>
 
 <style scoped>
