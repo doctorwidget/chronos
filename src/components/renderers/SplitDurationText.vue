@@ -180,4 +180,22 @@ export default {
     font-style:italic;
     font-size:small;
 }
+
+tr td {
+    color: black;
+    font-weight: bold;
+}
+
+tr td:nth-child(2){
+    background-color: palegreen;
+}
+
+tr td:nth-child(3){
+    background-color: palevioletred;
+}
+
+tr td:nth-child(4) {
+    background-color: paleturquoise;
+}
+
 </style>

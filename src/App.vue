@@ -21,20 +21,14 @@ const chrons: Array<Chron> = [
 </script>
 
 <template>
-    <ChronViews :title="'chronomancy'" :chrons="chrons"></ChronViews>   
+    <div :class="$style.root">
+        <ChronViews :title="'chronomancy'" :chrons="chrons"></ChronViews>   
+    </div>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+<style module>
+.root {
+    width: 100%;
+    min-width: 100%;
 }
 </style>

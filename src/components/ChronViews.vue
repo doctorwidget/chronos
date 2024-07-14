@@ -2,7 +2,6 @@
 /** 
  * A panel for managing multiple chron views.
  */
-import { ref } from 'vue';
 
 import ChronView from './ChronView.vue';
 import type { Chron } from '../data/chrontypes';
@@ -16,7 +15,7 @@ defineProps<{
 
 <template>
     <h1>{{ title }}</h1>
-    <div :class="$style.chronList">
+    <div :class="[$style.chronList, $style.chronViews]">
         <div v-for="chron in chrons">
             <ChronView :class="$style.chronItem" :chron="chron"></ChronView>
         </div>
@@ -25,9 +24,12 @@ defineProps<{
 
 <style module>
 
+.chronViews {
+    padding: 1rem;
+}
+
 .chronList {
     border: 1px solid var(--chron-list-border-color);
-    padding: 1rem;
 }
 
 .chronItem {
