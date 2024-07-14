@@ -163,7 +163,7 @@ const daysTotal = computed(() =>{
  * instead of being routed here
  */
 export default {
-    name: 'SplitDurationText',
+    name: 'SplitDuration',
 }
 </script>
 
