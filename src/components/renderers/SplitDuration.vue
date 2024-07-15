@@ -205,7 +205,7 @@ export default {
 
         <!-- table style: refactor me to a component -->
         <table :class="$style.unitTable" v-if="renderStyle==='table'">
-            <caption>{{ endStr }}</caption>
+            <caption>Durations as of {{ nowStr }}</caption>
             <tr>
                 <th scope="col">Units</th>
                 <th scope="col">Done</th>
