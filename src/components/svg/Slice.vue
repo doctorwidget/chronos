@@ -10,8 +10,9 @@ TODO: account for Cartesian vs Computer coordinates
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { getPointFromOrigin } from '../../trig/angles';
-import type { Angle, Point } from '../../trig/units';
+import { getPointFromOrigin } from '../../trig/points';
+import type { Point } from '../../trig/points';
+import type { Angle } from '../../trig/angles';
 
 export interface Props {
     // magnitude of the angle itself, with a specified unit type!
@@ -150,4 +151,4 @@ const pathAttr = computed(() => {
 
 <style module>
 
-</style>
+</style>../../trig/points../../trig/angles

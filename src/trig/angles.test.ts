@@ -1,270 +1,240 @@
 import { describe, expect, it } from 'vitest';
 
-import { getPoint, getX, getY } from './angles';
-import { degrees } from './units';
+import {
+    abbrs,
+    convert,
+    degrees,
+    equals,
+    gradians,
+    radians,
+} from './angles';
 
+describe('angular units', () => {
+    const zero = degrees(0);
+    const thirty = degrees(30);
+    const half = degrees(45);
+    const sixty = degrees(60);
+    const right = degrees(90);
+    const oblique = degrees(135);
+    const hemi = degrees(180);
+    const semi = degrees(270);
+    const circ = degrees(360);
+    const dangles = [zero, thirty, half, sixty, right, oblique, hemi, semi, circ];
 
-const zero = degrees(0);
-const thirty = degrees(30);
-const fortyfive = degrees(45);
-const sixty = degrees(60);
-const right = degrees(90);
-const oblique = degrees(135);
-const hemi = degrees(180);
-const threeQuarter = degrees(270);
-const circ = degrees(360);
-const negThirty = degrees(-30);
-const negSixty = degrees(-60);
-const negRight = degrees(-90);
+    const gzero = gradians(0);
+    const gthirty = gradians(33.333);
+    const ghalf = gradians(50);
+    const gsixty = gradians(66.667);
+    const gright = gradians(100);
+    const goblique = gradians(150);
+    const ghemi = gradians(200);
+    const gsemi = gradians(300);
+    const gcirc = gradians(400);
+    const gangles = [gzero, gthirty, ghalf, gsixty, gright, goblique, ghemi, gsemi, gcirc];
 
+    const rzero = radians(0);
+    const rthirty = radians(Math.PI / 6);
+    const rhalf = radians(Math.PI / 4);
+    const rsixty = radians(Math.PI / 3);
+    const rright = radians(Math.PI / 2);
+    const roblique = radians((Math.PI * 3) / 4 );
+    const rhemi = radians(Math.PI);
+    const rsemi = radians(Math.PI * 1.5);
+    const rcirc = radians(Math.PI * 2);
+    const rangles = [rzero, rthirty, rhalf, rsixty, rright, roblique, rhemi, rsemi, rcirc];
 
-describe('the getX function', ()=> {
+    const d = abbrs.d;
+    const g = abbrs.g;
+    const r = abbrs.r;
 
-    it('works as expected for zero degrees', () => {
-        const x = getX(zero, 1);
-        expect(x).toBe(1);
+    describe('sugared creation functions', () => {
+        it('works works with degrees', () => {
+            expect(zero.unit).toBe(d);
+            expect(thirty.unit).toBe(d);
+            expect(half.unit).toBe(d);
+            expect(sixty.unit).toBe(d);
+            expect(right.unit).toBe(d);
+            expect(oblique.unit).toBe(d);
+            expect(hemi.unit).toBe(d);
+            expect(semi.unit).toBe(d);
+            expect(circ.unit).toBe(d);
+        });
 
-        const x100 = getX(zero, 100);
-        expect(x100).toBe(100);
+        it('works works with gradians', () => {
+            expect(gzero.unit).toBe(g);
+            expect(gthirty.unit).toBe(g);
+            expect(ghalf.unit).toBe(g);
+            expect(gsixty.unit).toBe(g);
+            expect(gright.unit).toBe(g);
+            expect(goblique.unit).toBe(g);
+            expect(ghemi.unit).toBe(g);
+            expect(gsemi.unit).toBe(g);
+            expect(gcirc.unit).toBe(g);
+        });
+
+        it('works works with radians', () => {
+            expect(rzero.unit).toBe(r);
+            expect(rthirty.unit).toBe(r);
+            expect(rhalf.unit).toBe(r);
+            expect(rsixty.unit).toBe(r);
+            expect(rright.unit).toBe(r);
+            expect(roblique.unit).toBe(r);
+            expect(rhemi.unit).toBe(r);
+            expect(rsemi.unit).toBe(r);
+            expect(rcirc.unit).toBe(r);
+        });
     });
 
-    it('works as expected for thirty degrees', () => {
-        const x = getX(thirty, 1);
-        expect(x).toBeCloseTo(0.866);
+    describe('the convert function', () => {
 
-        const x100 = getX(thirty, 100);
-        expect(x100).toBeCloseTo(86.6);
+        it('converts to degrees to gradians', () => {
+            expect(convert(zero, g).value).toBe(0);
+            expect(convert(thirty, g).value).toBeCloseTo(33.33);
+            expect(convert(half, g).value).toBe(50);
+            expect(convert(sixty, g).value).toBeCloseTo(66.67);
+            expect(convert(right, g).value).toBe(100);
+            expect(convert(oblique, g).value).toBe(150);
+            expect(convert(hemi, g).value).toBe(200);
+            expect(convert(semi, g).value).toBe(300);
+            expect(convert(circ, g).value).toBe(400);
+
+            const units = dangles.map(a => convert(a, g).unit);
+            for (const u of units) {
+                expect(u).toBe('gradians');
+            }
+        });
+
+        it('converts degrees to radians', () => {
+            expect(convert(zero, r).value).toBe(0);
+            expect(convert(thirty, r).value).toBe(Math.PI / 6);
+            expect(convert(half, r).value).toBe(Math.PI / 4);
+            expect(convert(sixty, r).value).toBe(Math.PI / 3);
+            expect(convert(right, r).value).toBe(Math.PI / 2);
+            expect(convert(oblique, r).value).toBe(Math.PI * 0.75);
+            expect(convert(hemi, r).value).toBe(Math.PI);
+            expect(convert(semi, r).value).toBe(Math.PI * 1.5);
+            expect(convert(circ, r).value).toBe(Math.PI * 2);
+
+            const units = dangles.map(a => convert(a, r).unit);
+            for (const u of units) {
+                expect(u).toBe('radians');
+            };
+        });
+    
+
+        it('converts gradians to degrees', () => {
+            expect(convert(gzero, d).value).toBe(0);
+            expect(convert(gthirty, d).value).toBeCloseTo(30);
+            expect(convert(ghalf, d).value).toBe(45);
+            expect(convert(gsixty, d).value).toBeCloseTo(60);
+            expect(convert(gright, d).value).toBe(90);
+            expect(convert(goblique, d).value).toBe(135);
+            expect(convert(ghemi, d).value).toBe(180);
+            expect(convert(gsemi, d).value).toBe(270);
+            expect(convert(gcirc, d).value).toBe(360);
+            
+            const units = gangles.map(a => convert(a, d).unit);
+            for (const u of units) {
+                expect(u).toBe('degrees');
+            };
+        });
+
+        it('converts gradians to radians', () => {
+            expect(convert(gzero, r).value).toBe(0);
+            expect(convert(gthirty, r).value).toBeCloseTo(Math.PI / 6);
+            expect(convert(ghalf, r).value).toBeCloseTo(Math.PI / 4);
+            expect(convert(gsixty, r).value).toBeCloseTo(Math.PI / 3);
+            expect(convert(gright, r).value).toBeCloseTo(Math.PI / 2);
+            expect(convert(goblique, r).value).toBe(Math.PI * 0.75);
+            expect(convert(ghemi, r).value).toBeCloseTo(Math.PI);
+            expect(convert(gsemi, r).value).toBe(Math.PI * 1.5);
+            expect(convert(gcirc, r).value).toBeCloseTo(Math.PI * 2);
+
+            const units = gangles.map(a => convert(a, r).unit);
+            for (const u of units) {
+                expect(u).toBe('radians');
+            };
+        });
+
+        it('converts radians to degrees', () => {
+            expect(convert(rzero, d).value).toBe(0);
+            expect(convert(rthirty, d).value).toBeCloseTo(30);
+            expect(convert(rhalf, d).value).toBe(45);
+            expect(convert(rsixty, d).value).toBeCloseTo(60);
+            expect(convert(rright, d).value).toBe(90);
+            expect(convert(roblique, d).value).toBe(135);
+            expect(convert(rhemi, d).value).toBe(180);
+            expect(convert(rsemi, d).value).toBe(270);
+            expect(convert(rcirc, d).value).toBe(360);
+
+            const units = rangles.map(a => convert(a, d).unit);
+            for (const u of units) {
+                expect(u).toBe('degrees');
+            };
+        });
+
+        it('converts radians to gradians', () => {
+            expect(convert(rzero, g).value).toBe(0);
+            expect(convert(rthirty, g).value).toBeCloseTo(33.33);
+            expect(convert(rhalf, g).value).toBe(50);
+            expect(convert(rsixty, g).value).toBeCloseTo(66.67);
+            expect(convert(rright, g).value).toBe(100);
+            expect(convert(roblique, g).value).toBe(150);
+            expect(convert(rhemi, g).value).toBe(200);
+            expect(convert(rsemi, g).value).toBe(300);
+            expect(convert(rcirc, g).value).toBe(400);
+
+            const units = rangles.map(a => convert(a, g).unit);
+            for (const u of units) {
+                expect(u).toBe('gradians');
+            };
+        });
+    
     });
 
-    it('works as expected for forty-five degrees', () => {
-        const x = getX(fortyfive, 1);
-        expect(x).toBeCloseTo(0.7071);
+    describe('the equals function', () => {
 
-        const x100 = getX(fortyfive, 100);
-        expect(x100).toBeCloseTo(70.71);
-    });
+        it('recognizes degree/gradian equality', () => {
+            expect(equals(zero, gzero)).toBeTruthy();
+            expect(equals(thirty, gthirty)).toBeTruthy();
+            expect(equals(half, ghalf)).toBeTruthy();
+            expect(equals(sixty, gsixty)).toBeTruthy();
+            expect(equals(right, gright)).toBeTruthy();
+            expect(equals(oblique, goblique)).toBeTruthy();
+            expect(equals(hemi, ghemi)).toBeTruthy();
+            expect(equals(semi, gsemi)).toBeTruthy();
+            expect(equals(circ, gcirc)).toBeTruthy();
+        });
 
-    it('works as expected for sixty degrees', () => {
-        const x = getX(sixty, 1);
-        expect(x).toBeCloseTo(0.5);
+        it('recognizes degree/radian equality', () => {
+            expect(equals(zero, rzero)).toBeTruthy();
+            expect(equals(thirty, rthirty)).toBeTruthy();
+            expect(equals(half, rhalf)).toBeTruthy();
+            expect(equals(sixty, rsixty)).toBeTruthy();
+            expect(equals(right, rright)).toBeTruthy();
+            expect(equals(oblique, roblique)).toBeTruthy();
+            expect(equals(hemi, rhemi)).toBeTruthy();
+            expect(equals(semi, rsemi)).toBeTruthy();
+            expect(equals(circ, rcirc)).toBeTruthy();
+        });
 
-        const x100 = getX(sixty, 100);
-        expect(x100).toBeCloseTo(50);
-    });
-
-    it('works as expected for a right angle', () => {
-        const x = getX(right, 1);
-        expect(x).toBeCloseTo(0);
-
-        const x100 = getX(right, 100);
-        expect(x100).toBeCloseTo(0);
-    });
-
-    it('works as expected for a 135 degree angle', () => {
-        const x = getX(oblique, 1);
-        expect(x).toBeCloseTo(-0.7071);
-
-        const x100 = getX(oblique, 100);
-        expect(x100).toBeCloseTo(-70.71);
-    });
-
-    it('works as expected for a hemicircle', () => {
-        const x = getX(hemi, 1);
-        expect(x).toBe(-1);
-
-        const x100 = getX(hemi, 100);
-        expect(x100).toBe(-100);
-    });
-
-    it('works as expected for a 270 degree angle', () => {
-        const x = getX(threeQuarter, 1);
-        expect(x).toBeCloseTo(0);
-
-        const x100 = getX(threeQuarter, 100);
-        expect(x100).toBeCloseTo(0);
-    });
-
-    it('works as expected for a full circle', () => {
-        const x = getX(circ, 1);
-        expect(x).toBe(1);
-
-        const x100 = getX(circ, 100);
-        expect(x100).toBe(100);
-    });
-
-    it('works as expected for a negative thirty degree angle', () => {
-        const x = getX(negThirty, 1);
-        expect(x).toBeCloseTo(0.866);
-
-        const x100 = getX(negThirty, 100);
-        expect(x100).toBeCloseTo(86.6);
-    });
-
-    it('works as expected for a negative sixty degree angle', () => {
-        const x = getX(negSixty, 1);
-        expect(x).toBeCloseTo(0.5);
-
-        const x100 = getX(negSixty, 100);
-        expect(x100).toBeCloseTo(50);
-    });
-
-    it('works as expected for a negative right angle', () => {
-        const x = getX(negRight, 1);
-        expect(x).toBeCloseTo(0);
-
-        const x100 = getX(negRight, 100);
-        expect(x100).toBeCloseTo(0);
-    });
-
-});
-
-describe('the getY function', ()=> {
-
-    it('works as expected for zero degrees', () => {
-        const y = getY(zero, 1);
-        expect(y).toBe(0);
-
-        const y100 = getY(zero, 100);
-        expect(y100).toBe(0);
-    });
-
-    it('works as expected for thirty degrees', () => {
-        const y = getY(thirty, 1);
-        expect(y).toBeCloseTo(0.5);
-
-        const y100 = getY(thirty, 100);
-        expect(y100).toBeCloseTo(50);
-    });
-
-    it('works as expected for forty-five degrees', () => {
-        const y = getY(fortyfive, 1);
-        expect(y).toBeCloseTo(0.7071);
-
-        const y100 = getY(fortyfive, 100);
-        expect(y100).toBeCloseTo(70.71);
-    });
-
-    it('works as expected for sixty degrees', () => {
-        const y = getY(sixty, 1);
-        expect(y).toBeCloseTo(0.866);
-
-        const y100 = getY(sixty, 100);
-        expect(y100).toBeCloseTo(86.6);
-    });
-
-    it('works as expected for a right angle', () => {
-        const y = getY(right, 1);
-        expect(y).toBe(1);
-
-        const y100 = getY(right, 100);
-        expect(y100).toBe(100);
-    });
-
-    it('works as expected for a 135 degree angle', () => {
-        const y = getY(oblique, 1);
-        expect(y).toBeCloseTo(0.7071);
-
-        const y100 = getY(oblique, 100);
-        expect(y100).toBeCloseTo(70.71);
-    });
-
-    it('works as expected for a hemicircle', () => {
-        const y = getY(hemi, 1);
-        expect(y).toBeCloseTo(0);
-
-        const y100 = getY(hemi, 100);
-        expect(y100).toBeCloseTo(0);
-    });
-
-    it('works as expected for a 270 degree angle', () => {
-        const y = getY(threeQuarter, 1);
-        expect(y).toBeCloseTo(-1);
-
-        const y100 = getY(threeQuarter, 100);
-        expect(y100).toBeCloseTo(-100);
-    });
-
-    it('works as expected for a full circle', () => {
-        const y = getY(circ, 1);
-        expect(y).toBeCloseTo(0);
-
-        const y100 = getY(circ, 100);
-        expect(y100).toBeCloseTo(0);
-    });
-
-    it('works as expected for a negative thirty degree angle', () => {
-        const y = getY(negThirty, 1);
-        expect(y).toBeCloseTo(-0.5);
-
-        const y100 = getY(negThirty, 100);
-        expect(y100).toBeCloseTo(-50);
-    });
-
-    it('works as expected for a negative sixty degree angle', () => {
-        const y = getY(negSixty, 1);
-        expect(y).toBeCloseTo(-0.866);
-
-        const y100 = getY(negSixty, 100);
-        expect(y100).toBeCloseTo(-86.6);
-    });
-
-    it('works as expected for a negative right angle', () => {
-        const y = getY(negRight, 1);
-        expect(y).toBeCloseTo(-1);
-
-        const y100 = getY(negRight, 100);
-        expect(y100).toBeCloseTo(-100);
-    });
-});
-
-describe('the getPoint function', () => {
-
-    it('works as expected for zero degrees', () => {
-        const p = getPoint(zero, 100);
-        expect(p.x).toBe(100);
-        expect(p.y).toBe(0);
-    });
-
-    it('works as expected for thirty degrees', () => {
-        const p = getPoint(thirty, 100);
-        expect(p.x).toBeCloseTo(86.6);
-        expect(p.y).toBeCloseTo(50);
-    });
-
-    it('works as expected for forty-five degrees', () => {
-        const p = getPoint(fortyfive, 100);
-        expect(p.x).toBeCloseTo(70.71);
-        expect(p.y).toBeCloseTo(70.71);
-    });
-
-    it('works as expected for sixty degrees', () => {
-        const p = getPoint(sixty, 100);
-        expect(p.x).toBeCloseTo(50);
-        expect(p.y).toBeCloseTo(86.6);
-    });
-
-    it('works as expected for a right angle', () => {
-        const p = getPoint(right, 100);
-        expect(p.x).toBeCloseTo(0);
-        expect(p.y).toBe(100);
-    });
-
-    it('works as expected for a 135 degree angle', () => {
-        const p = getPoint(oblique, 100);
-        expect(p.x).toBeCloseTo(-70.71);
-        expect(p.y).toBeCloseTo(70.71);
-    });
-
-    it('works as expected for a hemicircle', () => {
-        const p = getPoint(hemi, 100);
-        expect(p.x).toBeCloseTo(-100);
-        expect(p.y).toBeCloseTo(0);
-    });
-
-    it('works as expected for a 270 degree angle', () => {
-        const p = getPoint(threeQuarter, 100);
-        expect(p.x).toBeCloseTo(0);
-        expect(p.y).toBeCloseTo(-100);
+        it('recognizes gradian/radian equality', () => {
+            expect(equals(gzero, rzero)).toBeTruthy();
+            expect(equals(gthirty, rthirty)).toBeTruthy();
+            expect(equals(ghalf, rhalf)).toBeTruthy();
+            expect(equals(gsixty, rsixty)).toBeTruthy();
+            expect(equals(gright, rright)).toBeTruthy();
+            expect(equals(goblique, roblique)).toBeTruthy();
+            expect(equals(ghemi, rhemi)).toBeTruthy();
+            expect(equals(gsemi, rsemi)).toBeTruthy();
+            expect(equals(gcirc, rcirc)).toBeTruthy();
+        });
     });
 
 });
+
+// TODO: tests for isLarge
+
+// TODO: tests for modulo
+
+

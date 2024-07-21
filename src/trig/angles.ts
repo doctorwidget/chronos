@@ -1,101 +1,177 @@
 /**
- * Types and functions for working with points and angles.
+ * Units for angles.
  */
-import type { Angle, Point } from './units';
-import { convert } from './units';
-
-
-
 /**
- * In a Cartesian system, angles go counterclockwise, 
- * since positive Y values go up with respect to the origin. 
- * But in Javascript (and all computer graphics), angles go clockwise,
- * since positive Y values go down with respect to the origin.
+ * facts & data about the units used for angles
  */
-export const yCorrection = {
-    cartesian: -1,
-    computer: 1,
+export const units = {
+    degrees: {
+        abbr: 'd',
+        circle: 360,
+        name: 'degrees',
+        to: {
+            degrees: 1,
+            gradians: 10/9,
+            radians: Math.PI / 180,
+        }
+    },
+    gradians: {
+        abbr: 'g',
+        circle: 400,
+        name: 'gradians',
+        to: {
+            degrees: 9/10,
+            gradians: 1,
+            radians: Math.PI / 200,
+        }
+    },
+    radians: {
+        abbr: 'r',
+        circle: Math.PI * 2,
+        name: 'radians',
+        to: {
+            degrees: 180 / Math.PI,
+            gradians: 200 / Math.PI,
+            radians: 1,
+        }
+    }
+} as const;
+
+
+export type AngleUnits = typeof units;
+export type AngleUnitKey =  keyof AngleUnits;
+export type AngleUnitValue = typeof units[AngleUnitKey];
+
+
+export const abbrs = {
+    d: 'degrees',
+    g: 'gradians',
+    r: 'radians',
+} as const;
+
+
+/** Always include units with your angles, or all is lost! */
+export type Angle = {
+    value: number,
+    unit: AngleUnitKey,
 };
 
 /**
- * Get the X and Y coordinates for a point at angle a on a circle of radius r.
+ * Convert an angle from one unit to another
  * 
- * Note that this is an _offset_ from an assumed origin of { x: 0, y: 0 }
- * So if your origin is something like { x: 50, y: 50 } or { x: 100, y: 100 },
- * then the .x and .y values of this returned point should be added to the origin values,
- * rather than being used directly. OR use 'getPointFromOrigin' (below),
- * and pass in your origin value. 
- * 
- * @param { Angle } angle - angle on the circle
- * @param { number } radius - radius (in px)
- * @return { Point } - coordinates (in px) for the desired point
+ * @param { Angle } from - incoming angle, to be converted
+ * @param { AngleUnitKey | AngleUnitValue } - unit to convert to
+ * @return { Angle } - same value in different units
  */
-export const getPoint = (angle: Angle, radius: number): Point => {
+export const convert = (from: Angle, to: AngleUnitKey | AngleUnitValue): Angle => {
+    const { unit, value } = from;
 
-    const x = getX(angle, radius);
-    const y = getY(angle, radius);
+    const angleData = typeof to === 'string' ? units[to] : to;
+    const convertedUnit = angleData.name;
 
-    return { x, y }
+    const conversionFactor = units[unit].to[convertedUnit];
+
+    const convertedValue = value * conversionFactor;
+
+    const converted = {
+        value: convertedValue,
+        unit: convertedUnit,
+    }
+
+    return converted;
 };
 
 /**
- * Get the X and Y coordinates for a point at angle a on a circle of radius r,
- * based on a supplied origin point.
- * 
- * @param { Angle } angle - angle on the circle
- * @param { number } radius - radius (in px)
- * @param { Point } origin - origin point 
- * @return { Point } - coordinates (in px) for the desired point
+ * Sugar for creating an angle in degrees.
+ * @param { number } value - number (in degrees)
+ * @return { Angle } - Angle in degrees
  */
-export const getPointFromOrigin = (angle: Angle, radius: number, origin: Point): Point => {
-    const offset = getPoint(angle, radius);
-    const finalPoint = {
-        x: origin.x + offset.x,
-        y: origin.y + offset.y
-    };
-
-    return finalPoint;
+export const degrees = (value: number):Angle => {
+    return {
+        value,
+        unit: 'degrees'
+    }
+};
+/**
+ * Sugar for creating an angle in gradians.
+ * @param { number } value - number (in gradians)
+ * @return { Angle } - Angle in gradians
+ */
+export const gradians = (value: number):Angle => {
+    return {
+        value,
+        unit: 'gradians',
+    }
+};
+/**
+ * Sugar for creating an angle in radians.
+ * @param { number } value - number (in radians)
+ * @return { Angle } - Angle in radians
+ */
+export const radians = (value: number):Angle => {
+    return {
+        value,
+        unit: 'radians',
+    }
 };
 
 /**
- * Get the X value for a point at angle a on a circle of radius r.
- * @param { Angle } angle - angle on the circle
- * @param { number } radius - radius (in px)
- * @return { number } - x value (in px) for the desired point
+ * Compare two angles and determine if they are equal
+ * to the specified number of significant digits.
+ * 
+ * @param { Angle } a - first angle
+ * @param { Angle } b - second angle
+ * @param { number } [digits = 2] - significant digits tolerance (1 = 0.1, 2 = 0.001, etc)
+ * @return { boolean } - true if the angles are equal to the specified precision
  */
-export const getX = (angle: Angle, radius: number): number => {
+export const equals = (a:Angle, b:Angle, digits = 2): boolean => {
+    const ar = convert(a, 'radians');
+    const br = convert(b, 'radians');
+
+    const gap = Math.abs(ar.value - br.value);
+
+    const tolerance = Math.pow(10, (digits * -1));
+
+    return gap < tolerance;
+};
+
+/**
+ * Is an angle a "large" angle, aka greater than a hemicircle.
+ * We need to know this when using SVG arc commands.
+ * 
+ * @param { Angle } angle - the angle to test
+ * @return { boolean } - true if that angle is greater than a hemicircle; otherwise false
+ */
+export const isLarge = (angle: Angle) => {
     const radians = convert(angle, 'radians');
+    const value = radians.value;
 
-    //  Given that our desired x is the 'adjacent' value,
-    //  and that the radius of the circle is the hypotenuse:
-
-    //  1. cos(theta) = adjacent / hypotenuse
-    //  2. adjacent = sin(theta) * hypotenuse
-
-    // therefore:
-    const x = Math.cos(radians.value) * radius;
-
-    return x;
+    // the answer is different for positive vs negative angles,
+    // and not in a way that we can fix with Math.abs!
+    if (value >= 0) {
+        return value > Math.PI;
+    } else {
+        return Math.abs(value) > Math.PI;
+    }
 };
 
 /**
- * Get the Y value for a point at angle a on a circle of radius r.
- * @param { Angle } angle - angle on the circle
- * @param { number } radius - radius (in px)
- * @return { number } - y value (in px) for the desired point
+ * Sanitize an angle to its "modulo" version; clip the angle to a value between
+ * +360 and -360 when using degrees, or the equivalent range for other units. 
+ * 
+ * e.g. an angle of 720 degrees should render exactly like one of 360 degrees,
+ * and an angle of 540 degrees should be rendered exactly the same as one of 180 degrees,
+ * and so on.
+ * 
+ * @param { Angle } angle - the angle to sanitize
+ * @return { Angle } - a new angle based on the old one, constrained to + or - one full circle. 
  */
-export const getY = (angle: Angle, radius: number): number => {
-    const radians = convert(angle, 'radians');
-
-    // Given that our desired y is the 'opposite' value,
-    // and that the radius of the circle is the hypotenuse:
-
-    //  1. sin(theta) = opposite / hypotenuse
-    //  2. opposite = sin(theta) * hypotenuse
+export const sanitize = (angle: Angle): Angle => {
+    const fullCircle = units[angle.unit].circle;
+    const sanitizedValue = angle.value % fullCircle;
     
-    // therefore:
-    const y = Math.sin(radians.value) * radius;
-
-    return y;
+    return {
+        value: sanitizedValue,
+        unit: angle.unit,
+    }
 };
-
