@@ -233,5 +233,8 @@ describe('angular units', () => {
 
 });
 
+// TODO: tests for isLarge
+
+// TODO: tests for modulo
 
 

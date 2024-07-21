@@ -139,3 +139,44 @@ export const equals = (a:Angle, b:Angle, digits = 2): boolean => {
 
     return gap < tolerance;
 };
+
+/**
+ * Is an angle a "large" angle, aka greater than a hemicircle.
+ * We need to know this when using SVG arc commands.
+ * 
+ * @param { Angle } angle - the angle to test
+ * @return { boolean } - true if that angle is greater than a hemicircle; otherwise false
+ */
+export const isLarge = (angle: Angle) => {
+    const radians = convert(angle, 'radians');
+    const value = radians.value;
+
+    // the answer is different for positive vs negative angles,
+    // and not in a way that we can fix with Math.abs!
+    if (value >= 0) {
+        return value > Math.PI;
+    } else {
+        return Math.abs(value) > Math.PI;
+    }
+};
+
+/**
+ * Sanitize an angle to its "modulo" version; clip the angle to a value between
+ * +360 and -360 when using degrees, or the equivalent range for other units. 
+ * 
+ * e.g. an angle of 720 degrees should render exactly like one of 360 degrees,
+ * and an angle of 540 degrees should be rendered exactly the same as one of 180 degrees,
+ * and so on.
+ * 
+ * @param { Angle } angle - the angle to sanitize
+ * @return { Angle } - a new angle based on the old one, constrained to + or - one full circle. 
+ */
+export const sanitize = (angle: Angle): Angle => {
+    const fullCircle = units[angle.unit].circle;
+    const sanitizedValue = angle.value % fullCircle;
+    
+    return {
+        value: sanitizedValue,
+        unit: angle.unit,
+    }
+};
