@@ -56,6 +56,11 @@ export type Angle = {
     unit: AngleUnitKey,
 };
 
+export type Point = {
+    x: number,
+    y: number,
+};
+
 /**
  * Convert an angle from one unit to another
  * 

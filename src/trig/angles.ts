@@ -1,13 +1,10 @@
 /**
  * Types and functions for working with points and angles.
  */
-import type { Angle } from './units';
+import type { Angle, Point } from './units';
 import { convert } from './units';
 
-export type Point = {
-    x: number,
-    y: number,
-};
+
 
 /**
  * In a Cartesian system, angles go counterclockwise, 
@@ -22,6 +19,13 @@ export const yCorrection = {
 
 /**
  * Get the X and Y coordinates for a point at angle a on a circle of radius r.
+ * 
+ * Note that this is an _offset_ from an assumed origin of { x: 0, y: 0 }
+ * So if your origin is something like { x: 50, y: 50 } or { x: 100, y: 100 },
+ * then the .x and .y values of this returned point should be added to the origin values,
+ * rather than being used directly. OR use 'getPointFromOrigin' (below),
+ * and pass in your origin value. 
+ * 
  * @param { Angle } angle - angle on the circle
  * @param { number } radius - radius (in px)
  * @return { Point } - coordinates (in px) for the desired point
@@ -32,6 +36,25 @@ export const getPoint = (angle: Angle, radius: number): Point => {
     const y = getY(angle, radius);
 
     return { x, y }
+};
+
+/**
+ * Get the X and Y coordinates for a point at angle a on a circle of radius r,
+ * based on a supplied origin point.
+ * 
+ * @param { Angle } angle - angle on the circle
+ * @param { number } radius - radius (in px)
+ * @param { Point } origin - origin point 
+ * @return { Point } - coordinates (in px) for the desired point
+ */
+export const getPointFromOrigin = (angle: Angle, radius: number, origin: Point): Point => {
+    const offset = getPoint(angle, radius);
+    const finalPoint = {
+        x: origin.x + offset.x,
+        y: origin.y + offset.y
+    };
+
+    return finalPoint;
 };
 
 /**
