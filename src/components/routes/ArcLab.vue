@@ -3,9 +3,9 @@ import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 
 import Slice from '../svg/Slice.vue';
-import type { Angle } from '../../trig/angles';
-import { isLarge, sanitize, units } from '../../trig/angles';
-import type { Point } from '../../trig/points';
+import type { Angle } from '../../util/trig/angles';
+import { isLarge, sanitize, units } from '../../util/trig/angles';
+import type { Point } from '../../util/trig/points';
 
 
 /**
@@ -173,4 +173,4 @@ const transform: ComputedRef<string> = computed(() => {
 .control label {
     font-weight: bold;
 }
-</style>../../trig/angles../../trig/angles
+</style>../../trig/angles../../trig/angles../../util/trig/angles../../util/trig/angles../../util/trig/points
