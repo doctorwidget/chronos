@@ -3,8 +3,35 @@
  */
 import { clamp } from '../math';
 import type { Angle } from '../trig/angles';
+import { isLarge, sanitize } from '../trig/angles';
 import { getPointFromOrigin } from '../trig/points';
 import type { Point } from '../trig/points';
+
+/** 
+ * There are a ton of options for drawing the actual path attribute
+ * Rather than requiring them as arguments (and potentially getting stuck with unwanted defaults)
+ * we define an options object with everything optional. 
+ */
+export type ArcPathOptions = {
+    // i.e. x-axis-rotation option; rotates the virtual ellipse, so no effect for true circles.
+    xAxisRotation: number, 
+
+    // large arc flag; draw the smaller (0) or larger (1) of the 2 possible circles
+    // we _usually_ calculate this by determining if the module of the angle is > 180
+    // but we should _allow_ users to specify it in the object if they have that need
+    largeArcFlag: 0 | 1,
+
+    // sweep flag, aka the clockwise flag
+    // 1 means the angle is drawn clockwise
+    // 0 means the angle is drawn counterclockwise; 
+    sweep: 0 | 1,
+
+    // how far to offset the inner part of the path
+    // 0 = a classic pizza slice
+    // N = some degree of donut-ness
+    // This will be clamped between 0 and (radius-1), and defaults to 0 if unspecified
+    offset: number,
+};
 
 /**
  * Get a complete [d] attribute for an arc-shaped <path>.
@@ -15,17 +42,38 @@ import type { Point } from '../trig/points';
  * @param { Angle } angle - angular length of the arc
  * @param { number } radius - radius of the virtual circle that the arc runs along
  * @param { Point} origin - local origin point
- * @param { number } [offset=0] - how far to offset the inner part of the path; 0 = true pizza slice; > 0 = donut segment 
- * @param { number } [rotation=0] - the x-axis-rotation of the virtual ellipse. No effect for a true circle!
- * @param { 0 | 1 } [large=0] - draw the larger angle when 1; otherwise draw the smaller one
- * @param { 0 | 1 } [sweep=1] - draw the arc clockwise when 1; otherwise draw the arc counterclockwise
+ * @param { Partial<ArcPathOptions> } opts - optional arc-related options (all have sane defaults)
  * @return { string } - string value for the [d] attribute, creating the arc described by the above
  */
-export const getArcPath = (angle:Angle, radius: number, origin:Point, offset = 0, rotation=0, large=0, sweep=1) => {
+export const getArcPath = (angle:Angle, radius: number, origin:Point, opts:Partial<ArcPathOptions> = {}) => {
+    // sanitize the angle via modulo division
+    const _angle = sanitize(angle);
+
+    // donut-ness; 
+    // defaults to 0 - no donut-ness at all, just a pizza slice
+    const offset = opts.offset || 0;
+
+    // inner radius will be used whend rawing the inner arc
+    // in a zero-offset situation, this is useless but harmless
     const innerRadius = radius - clamp(offset, 0, radius - 1);
 
-    const { innerA, outerB, outerC, innerD, } = getArcPoints(angle, radius, origin, offset);
+    // rotation of the ellipse, if the arc is around an ellipse instead of a circle
+    // defaults to 0 - no such rotation
+    const rotation = opts.xAxisRotation || 0;
 
+    // large angle, yes or no?
+    // defaults to being calculated; angle > 180 gets drawn with largeArc:1, otherwise largeArc:0
+    const calcLarge = isLarge(_angle) ? 1 : 0;
+    const large = opts.hasOwnProperty('largeArcFlag') ? opts.largeArcFlag! : calcLarge;
+
+    // sweep direction
+    const sweep = opts.hasOwnProperty('sweep') ? opts.sweep! : 1;
+
+    // get the points
+    const { innerA, outerB, outerC, innerD, } = getArcPoints(_angle, radius, origin, offset);
+
+
+    //// DRAW THE PATH
     // start at innerA,
     let d = `M ${innerA.x} ${innerA.y} `;
 
@@ -36,7 +84,7 @@ export const getArcPath = (angle:Angle, radius: number, origin:Point, offset = 0
     d += `A ${radius} ${radius} ${rotation} ${large} ${sweep} ${outerC.x} ${outerC.y} `;
 
     // straight line from outerC to innerD
-    d += `L ${outerC.x} ${ outerC.y } `;
+    d += `L ${innerD.x} ${ innerD.y } `;
 
     // the inner arc, from innerD back to innerA (note the reversal of sweep!)
     d += `A ${ innerRadius } ${ innerRadius } ${ rotation } ${ large } ${ sweep ? 0 : 1 } ${innerA.x} ${innerA.y} `;

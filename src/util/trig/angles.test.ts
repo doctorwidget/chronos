@@ -6,7 +6,9 @@ import {
     degrees,
     equals,
     gradians,
+    isLarge,
     radians,
+    sanitize,
 } from './angles';
 
 describe('angular units', () => {
@@ -230,11 +232,97 @@ describe('angular units', () => {
             expect(equals(gcirc, rcirc)).toBeTruthy();
         });
     });
-
 });
 
 // TODO: tests for isLarge
+describe('the isLarge function', () => {
+    const smallDegrees = degrees(45);
+    const largeDegrees = degrees(200);
+
+    const smallGradians = gradians(50);
+    const largeGradians = gradians(225);
+
+    const smallRadians = radians(1);
+    const largeRadians = radians(Math.PI + 1);
+
+    it('recognizes large and small angles as such', () => {
+
+        expect(isLarge(smallDegrees)).toBeFalsy();
+        expect(isLarge(largeDegrees)).toBeTruthy();
+        
+        expect(isLarge(smallGradians)).toBeFalsy();
+        expect(isLarge(largeGradians)).toBeTruthy();
+
+        expect(isLarge(smallRadians)).toBeFalsy();
+        expect(isLarge(largeRadians)).toBeTruthy();
+    });
+
+    it('is not fooled by negative angles', () => {
+        expect(isLarge(degrees(-179))).toBeFalsy();
+        expect(isLarge(degrees(-181))).toBeTruthy();
+        
+        expect(isLarge(gradians(-199))).toBeFalsy();
+        expect(isLarge(gradians(-201))).toBeTruthy();
+
+        expect(isLarge(radians(-1 * Math.PI))).toBeFalsy();
+        expect(isLarge(radians(-1 * (Math.PI + 0.1)))).toBeTruthy();
+    });
+});
 
 // TODO: tests for modulo
+describe('the sanitize function', () => {
+    const smallDegrees = degrees(-45);
+    const largeDegrees = degrees(200);
+
+    const smallGradians = gradians(50);
+    const largeGradians = gradians(-225);
+
+    const smallRadians = radians(-1);
+    const largeRadians = radians(Math.PI + 1);
+
+    it('has no effect on small angles', () => {
+        const _smallDegrees = sanitize(smallDegrees);
+        expect(equals(_smallDegrees, smallDegrees)).toBeTruthy();
+
+        const _largeDegrees = sanitize(largeDegrees);
+        expect(equals(_largeDegrees, largeDegrees)).toBeTruthy();
+
+        const _smallGradians = sanitize(smallGradians);
+        expect(equals(_smallGradians, smallGradians)).toBeTruthy();
+
+        const _largeGradians = sanitize(largeGradians);
+        expect(equals(_largeGradians, largeGradians)).toBeTruthy();
+
+        const _smallRadians = sanitize(smallRadians);
+        expect(equals(_smallRadians, smallRadians)).toBeTruthy();
+
+        const _largeRadians = sanitize(largeRadians);
+        expect(equals(_largeRadians, largeRadians)).toBeTruthy();
+    });
+
+    it('sanitizes huge angles', () => {
+        const _hugeDegrees = sanitize(degrees(720));
+        expect(_hugeDegrees.value).toBe(0);
+
+        // NB: we cannot get to 360 after sanitizing!
+        const no360 = sanitize(degrees(360));
+        expect(no360.value).toBe(0);
+
+        const _hugeDegreesNeg = sanitize(degrees(-540));
+        expect(_hugeDegreesNeg.value).toBe(-180);
+
+        const _hugeGradians = sanitize(gradians(401));
+        expect(_hugeGradians.value).toBe(1);
+
+        const _hugeGradiansNeg = sanitize(gradians(-808));
+        expect(_hugeGradiansNeg.value).toBe(-8);
+
+        const _hugeRadians = sanitize(radians(Math.PI * 11));
+        expect(_hugeRadians.value).toBeCloseTo(Math.PI);
+
+        const _hugeRadiansNeg = sanitize(radians(Math.PI * -2.1));
+        expect(_hugeRadiansNeg.value).toBeCloseTo(Math.PI * -0.1);
+    });
+});
 
 
