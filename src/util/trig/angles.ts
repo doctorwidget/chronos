@@ -175,3 +175,11 @@ export const sanitize = (angle: Angle): Angle => {
         unit: angle.unit,
     }
 };
+
+/**
+ * Get the human-readable version of an angle
+ * @param  { Angle } angle - the angle to humanize
+ */
+export const humanize = (angle: Angle):String => {
+    return `${angle.value} ${angle.unit}`;
+};

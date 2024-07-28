@@ -16,6 +16,7 @@ import { computed } from 'vue';
 import { getArcPath } from '../../util/svg/path';
 import type { Point } from '../../util/trig/points';
 import type { Angle } from '../../util/trig/angles';
+import { humanize } from '../../util/trig/angles';
 
 export interface Props {
     // magnitude of the angle itself, with a specified unit type!
@@ -94,7 +95,9 @@ const pathAttr = computed(() => {
         :class="props.className"
         :fill="props.fillColor"
         :stroke="props.strokeColor"
-        :stroke-width="props.strokeWidth">
+        :stroke-width="props.strokeWidth"
+        :data-angle="humanize(angle)"
+        :data-offset="offset">
     </path>
 </template>
 
