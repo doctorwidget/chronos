@@ -2,9 +2,9 @@
 import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 
-import Slice from '../svg/Slice.vue';
+import PieSlice from '../svg/PieSlice.vue';
 import type { Angle } from '../../util/trig/angles';
-import { isLarge, sanitize, units } from '../../util/trig/angles';
+import { sanitize, units } from '../../util/trig/angles';
 import type { Point } from '../../util/trig/points';
 
 
@@ -24,6 +24,13 @@ const size = defineModel('size', {
 const rotation = defineModel('rotation', {
     default: 0,
 });
+const offset = defineModel('offset', {
+    default: 0,
+});
+const color = defineModel('color', {
+    default: 'skyblue'
+});
+
 // baseline rotation to correct for cartesian vs computer
 const CART = -90;
 
@@ -55,19 +62,6 @@ const angle:ComputedRef<Angle> = computed(() => {
     return sanitized;
 });
 
-/**
- * We want largeArc:true whenever the angle is > 180, aka a 'reflex' angle.
- * ('obtuse' angles are between 90 and 180, but they still use largeArc: false)
- */
-const largeArc:ComputedRef<number> = computed(() => {
-    return isLarge(angle.value) ? 1 : 0;
-});
-/**
- * Sweep should be *counterclockwise* for negative angles
- */
-const sweep:ComputedRef<number> = computed(() => {
-    return (angle.value.value < 0) ? 0 : 1;
-})
 
 const origin: ComputedRef<Point> = computed(() => {
     return {
@@ -110,7 +104,7 @@ const transform: ComputedRef<string> = computed(() => {
             <!-- total SVG size-->
             <span :class="$style.control">
                 <label for="size">Size</label>
-                <input id="size" type="number" v-model="size"/>
+                <input id="size" type="number" v-model="size" min="0" max="500"/>
             </span>
 
             <!-- rotation away from -90.
@@ -119,13 +113,23 @@ const transform: ComputedRef<string> = computed(() => {
              -->
             <span :class="$style.control">
                 <label for="rotation">Rotation</label>
-                <input type="number" v-model="rotation"/>
+                <input id="rotation" type="number" v-model="rotation"/>
                 degrees
             </span>
 
             <!-- offset value (donut vs pizza slice)-->
+            <span :class="$style.control">
+                <label for="offset">Offset</label>
+                <input id="offset" type="number" v-model="offset" min="0" max="500"/>
+                pixels
+            </span>
 
             <!-- fill color -->
+            <span :class="$style.control">
+                <label for="color">CSS Color</label>
+                <input id="color" type="text" v-model="color"/>
+                (hex or name)
+            </span>
         </div>
         <svg xmlns='http://www.w3.org/2000/svg'
             :viewPort="`0 0 ${size} ${size}`"
@@ -133,20 +137,24 @@ const transform: ComputedRef<string> = computed(() => {
             :height="`${size}`">
 
             <g :transform="transform">
-                <Slice
+                <PieSlice
                     :angle="angle"
+                    :offset="offset"
                     :origin="origin"
                     :radius="size / 2"
-                    :fillColor="'skyblue'"
-                    :flagLargeArc="largeArc"
-                    :flagSweep="sweep"
+                    :fillColor="color"
                     >
-                </Slice>
+                </PieSlice>
             </g>
 
         </svg>
     </div>
 </template>
+
+<!--
+:flagLargeArc="largeArc"
+:flagSweep="sweep"
+-->
 
 <style module>
 .arcLab {

@@ -53,9 +53,9 @@ export const getArcPath = (angle:Angle, radius: number, origin:Point, opts:Parti
     // defaults to 0 - no donut-ness at all, just a pizza slice
     const offset = opts.offset || 0;
 
-    // inner radius will be used whend rawing the inner arc
+    // inner radius will be used when drawing the inner arc
     // in a zero-offset situation, this is useless but harmless
-    const innerRadius = radius - clamp(offset, 0, radius - 1);
+    const innerRadius = clamp(offset, 0, radius - 1);
 
     // rotation of the ellipse, if the arc is around an ellipse instead of a circle
     // defaults to 0 - no such rotation
@@ -72,6 +72,12 @@ export const getArcPath = (angle:Angle, radius: number, origin:Point, opts:Parti
     // get the points
     const { innerA, outerB, outerC, innerD, } = getArcPoints(_angle, radius, origin, offset);
 
+    // round the points to the nearest 0.01 pixels
+    const points = [innerA, outerB, outerC, innerD];
+    for (const p of points) {
+        p.x = (Math.round(p.x * 100)) / 100;
+        p.y = (Math.round(p.y * 100)) / 100;
+    }
 
     //// DRAW THE PATH
     // start at innerA,
@@ -123,18 +129,18 @@ export const getArcPoints = (angle:Angle, radius: number, origin:Point, offset: 
     // this will be exactly equal to the origin if the offset is 0
     const innerA = {
         x: origin.x + _offset,
-        y: 0,
+        y: origin.y,
     };
 
     // second point is the outer corner of the segment on the first line;
     // the offset never matters for this one
     const outerB = {
         x: origin.x + radius,
-        y: 0,
+        y: origin.y,
     };
 
     const outerC = getPointFromOrigin(angle, radius, origin);
-    const innerD = getPointFromOrigin(angle, origin.x + _offset, origin);
+    const innerD = getPointFromOrigin(angle, _offset, origin);
 
     return {
         innerA,

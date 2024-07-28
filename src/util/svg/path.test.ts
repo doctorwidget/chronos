@@ -358,30 +358,81 @@ describe('the getArcPoints function', () => {
     });
 });
 
-describe.skip('the getArcPath function', () => {
+describe('the getArcPath function', () => {
     // simplest case, 90 degree pie slice
     it('works for a 90 degree pie slice', () => {
-        
+        const angle = degrees(90);
+        const radius = 100;
+        const origin = { x: 0, y: 0 };
+
+        const path = getArcPath(angle, radius, origin);
+
+        const parts = path.split(" ");
+        expect(parts[0]).toBe('M');
+        expect(parts[1]).toBe('0');
+        expect(parts[2]).toBe('0');
+        expect(parts[3]).toBe('L');
+        expect(parts[4]).toBe('100');
+        expect(parts[5]).toBe('0');
+        expect(parts[6]).toBe('A');
+        expect(parts[7]).toBe('100');
+        expect(parts[8]).toBe('100');
+        expect(parts[9]).toBe('0');
+        expect(parts[10]).toBe('0');
+        expect(parts[11]).toBe('1');
+        expect(parts[12]).toBe('0');
+        expect(parts[13]).toBe('100');
+        expect(parts[14]).toBe('L');
+        expect(parts[15]).toBe('0');
+        expect(parts[16]).toBe('0');
+        expect(parts[17]).toBe('A');
+        expect(parts[18]).toBe('0');
+        expect(parts[19]).toBe('0');
+        expect(parts[20]).toBe('0');
+        expect(parts[21]).toBe('0');
+        expect(parts[22]).toBe('0');
+        expect(parts[23]).toBe('0');
+        expect(parts[24]).toBe('0');
+        expect(parts[25]).toBe('Z');
+        expect(parts.length).toBe(26);
     });
 
-    // then the same, but a donut
+    it('works for a 90 degree donut (offset 50)', () => {
+        const angle = degrees(90);
+        const radius = 100;
+        const origin = { x: 0, y: 0 };
+        const opts = { offset: 50 };
 
-    // large angle to test that we correctly calculate that flag
+        const path = getArcPath(angle, radius, origin, opts);
 
-    // >360 angle to confirm that we apply modulo
+        const parts = path.split(" ");
+        expect(parts[0]).toBe('M');
+        expect(parts[1]).toBe('50');
+        expect(parts[2]).toBe('0');
+        expect(parts[3]).toBe('L');
+        expect(parts[4]).toBe('100');
+        expect(parts[5]).toBe('0');
+        expect(parts[6]).toBe('A');
+        expect(parts[7]).toBe('100');
+        expect(parts[8]).toBe('100');
+        expect(parts[9]).toBe('0');
+        expect(parts[10]).toBe('0');
+        expect(parts[11]).toBe('1');
+        expect(parts[12]).toBe('0');
+        expect(parts[13]).toBe('100');
+        expect(parts[14]).toBe('L');
+        expect(parts[15]).toBe('0');
+        expect(parts[16]).toBe('50');
+        expect(parts[17]).toBe('A');
+        expect(parts[18]).toBe('50');
+        expect(parts[19]).toBe('50');
+        expect(parts[20]).toBe('0');
+        expect(parts[21]).toBe('0');
+        expect(parts[22]).toBe('0');
+        expect(parts[23]).toBe('50');
+        expect(parts[24]).toBe('0');
+        expect(parts[25]).toBe('Z');
+        expect(parts.length).toBe(26);
+    });
+
 });
-
-// describe('the getArcPath function', () => {})
-// this one will be a giant PITA to test!
-// Q: is it even worth testing?
-// A: do exactly one test for the correct string _form_, without worrying about the values
-// (getArcPoints provides the values... getArcPath is just about stringing together a bigass string... so test that!)
-// and there are details to test!
-// - the sweep flag must be reversed for the innerD to innerA arc
-// - the large arc flag must turn on for large arcs
-//    (this bears thinking about; it's all explicit in slice.vue right now...
-//     but shouldn't it be handled automagically by getArcPath()? 
-//     my gut feeling says it _should_ be handled automagically
-//     In fact, my gut tells me that both largeArc and sweep should be handled automagically,
-//     but somehow the methods need to remain amenable to overriding if desired.
-//     Gotta think that through)
