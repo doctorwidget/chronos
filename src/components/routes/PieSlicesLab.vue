@@ -35,7 +35,7 @@ const gQuantity = defineModel('gQuantity', {
 });
 
 const offset = defineModel('offset', {
-    default: 0,
+    default: 100,
 });
 
 // constants (for now)

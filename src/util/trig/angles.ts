@@ -4,6 +4,8 @@
 /**
  * facts & data about the units used for angles
  */
+import { toPrecision } from "../data/math";
+
 export const units = {
     degrees: {
         abbr: 'd',
@@ -181,5 +183,5 @@ export const sanitize = (angle: Angle): Angle => {
  * @param  { Angle } angle - the angle to humanize
  */
 export const humanize = (angle: Angle):String => {
-    return `${angle.value} ${angle.unit}`;
+    return `${toPrecision(angle.value, 1)} ${angle.unit}`;
 };

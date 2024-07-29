@@ -90,7 +90,7 @@ const sliceData: ComputedRef<Array<ArcDatum>> = computed(() => {
         let strokeWidth = 1;
         if (percent < 1){
             // keep tiny values visible
-            strokeWidth = 4;
+            strokeWidth = 5;
         }
 
         const arcDatum:ArcDatum = {
