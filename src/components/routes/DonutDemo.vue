@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+/** an early practice component; nothing interactive about it */
 const diameter = 400;
 const radius = diameter / 2;
 const origin = {

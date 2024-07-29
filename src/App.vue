@@ -7,14 +7,16 @@ import { useRouter } from 'vue-router';
 import './assets/chrons.css';
 import Home from './components/routes/Home.vue';
 import DonutDemo from './components/routes/DonutDemo.vue';
-import ArcLab from './components/routes/ArcLab.vue';
+import PieSliceLab from './components/routes/PieSliceLab.vue'; 
+import PieSlicesLab from './components/routes/PieSlicesLab.vue';
 
 const router = useRouter();
 
 const routes = [
   { path: '/', component: Home },
   { path: '/home', component: Home },
-  { path: '/arc', component: ArcLab },
+  { path: '/arc', component: PieSliceLab },
+  { path: '/arcs', component: PieSlicesLab },
   { path: '/pie', component: DonutDemo },
 ];
 
@@ -37,6 +39,7 @@ onMounted(() => {
         <nav id="app-nav" :class="$style.appNav">
             <RouterLink :class="$style.navLink" data-navlink to="/">Home</RouterLink>
             <RouterLink :class="$style.navLink" data-navlink to="/arc">Arc</RouterLink>
+            <RouterLink :class="$style.navLink" data-navlink to="/arcs">Arcs</RouterLink>
             <RouterLink :class="$style.navLink" data-navlink to="/pie">Donut</RouterLink>
         </nav>
         <main :class="$style.appMain">

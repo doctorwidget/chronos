@@ -7,6 +7,42 @@ import { isLarge, sanitize } from '../trig/angles';
 import { getPointFromOrigin } from '../trig/points';
 import type { Point } from '../trig/points';
 
+/**
+ * The data we need to draw one (1) arc-like SVG path.
+ */
+export type ArcDatum = {
+    // magnitude of the angle itself, with a specified unit type!
+    angle: Angle,
+
+    className?: string,
+
+    // valid css color string
+    fillColor?: string,
+
+    // offset controls whether or not we look like a pizza slice or a donut segment
+    // - a pizza pie slice has zero offset
+    // - a donut segment has an offset > 0 but < 1
+    offset?: number,
+
+    // origin of the slice;
+    // e.g. use an origin of 100, 100 to get a path centered in
+    // an SVG with a viewBox of 0 0 200 200
+    origin: Point,
+
+    // radius, in pixels, of the virtual circle this is a slice of
+    radius: number,
+
+    // rotation of the angle
+    // (after drawing it starting from x:radius, y:0)
+    rotation?: Angle,
+
+    // valid css color string
+    strokeColor?: string,
+
+    // stroke width, in pixels
+    strokeWidth?: number,
+};
+
 /** 
  * There are a ton of options for drawing the actual path attribute
  * Rather than requiring them as arguments (and potentially getting stuck with unwanted defaults)

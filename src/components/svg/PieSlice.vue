@@ -14,47 +14,20 @@ The path is always drawn starting from angle 0; you should place the
 import { computed } from 'vue';
 
 import { getArcPath } from '../../util/svg/path';
+import type { ArcDatum } from '../../util/svg/path';
 import type { Point } from '../../util/trig/points';
 import type { Angle } from '../../util/trig/angles';
 import { humanize } from '../../util/trig/angles';
 
-export interface Props {
-    // magnitude of the angle itself, with a specified unit type!
-    angle: Angle,
-
-    className?: string,
-
-    // valid css color string
-    fillColor?: string,
-
-    // offset controls whether or not we look like a pizza slice or a donut segment
-    // - a pizza pie slice has zero offset
-    // - a donut segment has an offset > 0 but < 1
-    offset?: number,
-
-    // origin of the slice;
-    // e.g. use an origin of 100, 100 to get a path centered in
-    // an SVG with a viewBox of 0 0 200 200
-    origin: Point,
-
-    // radius, in pixels, of the virtual circle this is a slice of
-    radius: number,
-
-    // valid css color string
-    strokeColor?: string,
-    
-    // stroke width, in pixels
-    strokeWidth?: number,
-};
 
 // both withDefaults and defineProps are compiler macros
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ArcDatum>(), {
     // all non-primitive values must be factory functions!
     angle: () => {
         return {
             value: 90, 
             unit: 'degrees',
-        }
+        } as Angle;
     },
 
     // pizza slice by default
@@ -65,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
         return {
             x: 0,
             y: 0,
-        }
+        } as Point;
     },
 
     radius: 100
