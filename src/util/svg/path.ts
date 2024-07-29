@@ -1,7 +1,7 @@
 /**
  * Utilities for working with SVG <path> elements
  */
-import { clamp } from '../math';
+import { clamp } from '../data/math';
 import type { Angle } from '../trig/angles';
 import { isLarge, sanitize } from '../trig/angles';
 import { getPointFromOrigin } from '../trig/points';

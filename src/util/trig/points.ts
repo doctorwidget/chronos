@@ -10,6 +10,8 @@ export type Point = {
     y: number,
 };
 
+export type Point3D = Point & { z: number };
+
 /**
  * In a Cartesian system, angles go counterclockwise, 
  * since positive Y values go up with respect to the origin. 
