@@ -35,7 +35,7 @@ export interface Props {
     // an SVG with a viewBox of 0 0 200 200
     origin: Point,
 
-    // non-optional style map; deciding on styles is above our pay grade!
+    // non-optional style map; deciding on styles is above our pay grade!q
     styles: StyleMap,
 };
 
