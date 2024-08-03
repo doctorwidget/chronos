@@ -45,6 +45,7 @@ onMounted(() => {
     width: 100%;
     min-width: 100%;
     position: relative;
+    padding-top: 30px;
 }
 
 .appNav {
