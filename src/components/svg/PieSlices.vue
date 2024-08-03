@@ -112,8 +112,8 @@ const sliceData: ComputedRef<Array<ArcDatum>> = computed(() => {
             strokeColor: style.strokeColor!,
             strokeWidth: strokeWidth || style.strokeWidth,
 
-            // optional category
-            category: datum.category || 'uncategorized',
+            // optional extra info
+            datum,
         };
 
         return arcDatum;
@@ -132,6 +132,16 @@ const getTransform = (slice: ArcDatum):string => {
     const transform = `rotate(${degrees}, ${x}, ${y})`;
 
     return transform;
+};
+
+// get the value as a percentage
+const getPercent = (slice:ArcDatum):string => {
+    if (slice.datum && 'I' in slice.datum){
+        const interval = slice.datum.I.percent(2);
+        return `${interval}%`
+    }
+
+    return 'N/A';
 };
 
 
@@ -154,7 +164,10 @@ const getTransform = (slice: ArcDatum):string => {
                 :fillColor="slice.fillColor"
                 :strokeColor="slice.strokeColor"
                 :strokeWidth="slice.strokeWidth"
-                :data-category="slice.category"
+                :data-category="slice.datum?.category"
+                :data-value="slice.datum?.value"
+                :data-unit="slice.datum?.units"
+                :data-percent="getPercent(slice)"
             ></PieSlice>
         </g>
     </g>

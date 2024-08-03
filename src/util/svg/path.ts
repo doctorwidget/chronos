@@ -2,6 +2,7 @@
  * Utilities for working with SVG <path> elements
  */
 import { clamp } from '../data/math';
+import type { Datum, UnitDatum } from '../data/types';
 import type { Angle } from '../trig/angles';
 import { isLarge, sanitize } from '../trig/angles';
 import { getPointFromOrigin } from '../trig/points';
@@ -18,6 +19,9 @@ export type ArcDatum = {
     category?: string,
 
     className?: string,
+
+    // completely optional datum object
+    datum?: Datum | UnitDatum,
 
     // valid css color string
     fillColor?: string,

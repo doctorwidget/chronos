@@ -54,9 +54,13 @@ const props = defineProps<{
 
 
  /** more use of the v-model macro, new in Vue 3.4 */
- type RenderStyle = 'table' | 'donut';
- const renderStyle = defineModel<RenderStyle, string>({
-    default: "table",
+const showTable = defineModel('showTable', {
+    type: Boolean,
+    default: true,
+});
+const showDonut = defineModel('showDonut', {
+    type: Boolean,
+    default: true,
 });
 
 const now = Date();
@@ -201,7 +205,7 @@ export default {
 
 <template>
     <div :class="$style.splitDuration">
-        <h2>{{ props.chron.title }}</h2>
+        <h2 :class="$style.title">{{ props.chron.title }}</h2>
 
         <!-- summary list: refactor me to a component -->
         <ul :class="$style.summary">
@@ -225,18 +229,18 @@ export default {
             </li>
         </ul>
         <div>
-            <strong>Render style: </strong>
+            <strong>Render as: </strong>
             <span>
-                <input type="radio" id="styleTable" value="table" v-model="renderStyle" />
+                <input type="checkbox" id="styleTable" v-model="showTable"/>
                 <label for="styleTable">Table</label>
 
-                <input type="radio" id="styleDonut" value="donut" v-model="renderStyle" />
-                <label for="donut">Donut</label>
+                <input type="checkbox" id="styleDonut" v-model="showDonut" />
+                <label for="styleDonut">Donut</label>
             </span>
         </div>
 
         <!-- table style: refactor me to a component -->
-        <table :class="$style.unitTable" v-if="renderStyle==='table'">
+        <table :class="$style.unitTable" v-if="showTable">
             <caption>{{ chartTitle }}</caption>
             <tr>
                 <th scope="col">Units</th>
@@ -271,16 +275,16 @@ export default {
         </table>
 
         <!-- donut style; refactor me to a component -->
-        <div v-if="renderStyle==='donut'">
+        <div v-if="showDonut">
             <!--<DonutDemo></DonutDemo>-->
             <PieChart 
                 :data="durations"
-                :diameter="404"
-                :offset="101"
+                :diameter="240"
+                :offset="80"
                 :title="chartTitle"
                 :legend="false"
-                :height="600"
-                :width="800"
+                :height="400"
+                :width="600"
             ></PieChart>
         </div>
     </div>
@@ -291,13 +295,26 @@ export default {
     border: 1px dotted magenta;
 }
 
+.title {
+    font-size: 1rem;
+    font-family: monospace;
+}
+
 .unitTable {
     width: 100%;
+    padding-right: 10rem;
 }
 
 .unitTable caption {
     font-style:italic;
     font-size:small;
+}
+
+tr th:first-of-type {
+    text-align: right;
+    padding-right: 1rem;
+    max-width: 200px;
+    width: 200px;
 }
 
 tr td {
@@ -306,15 +323,15 @@ tr td {
 }
 
 tr td:nth-child(2){
-    background-color: palegreen;
+    background-color: skyblue;
 }
 
 tr td:nth-child(3){
-    background-color: palevioletred;
+    background-color: lightpink;
 }
 
 tr td:nth-child(4) {
-    background-color: paleturquoise;
+    background-color: goldenrod;
 }
 
 .summary {

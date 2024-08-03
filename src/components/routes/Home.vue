@@ -56,7 +56,7 @@ const chrons: Ref<Array<Chron>> = computed(() => {
             name: 'SplitDuration',
             start: new Date('2016-05-16T12:00:00'),
             end: targetDate.value,
-            title: 'Time to retirement'
+            title: 'By The Numbers'
         },
         {
             name: 'Countup',
@@ -84,7 +84,7 @@ const chrons: Ref<Array<Chron>> = computed(() => {
                 <label for="a65">65</label>
             </span>
         </div>
-        <ChronViews :title="'Chron Marches On'" :chrons="chrons"></ChronViews>   
+        <ChronViews :title="'Time To Retirement'" :chrons="chrons"></ChronViews>   
     </div>
 </template>
 

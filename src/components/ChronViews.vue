@@ -14,7 +14,7 @@ defineProps<{
 </script>
 
 <template>
-    <h1>{{ title }}</h1>
+    <h1 :class="$style.title">{{ title }}</h1>
     <div :class="[$style.chronList, $style.chronViews]">
         <div v-for="chron in chrons">
             <ChronView :class="$style.chronItem" :chron="chron"></ChronView>
@@ -23,6 +23,11 @@ defineProps<{
 </template>
 
 <style module>
+
+.title {
+    font-size:1.4rem;
+    font-family: monospace;
+}
 
 .chronViews {
     padding: 1rem;
