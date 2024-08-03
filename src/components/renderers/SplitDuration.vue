@@ -3,8 +3,8 @@ This should eventually be split up into at least four components:
 
 1. this top level renderer, SplitDuration
 2. a SplitDurationSummary.vue component, handling the <list> of universal text value
-3. a SplitDurationTable.vue component, rendering the original table
-4. a SplitDurationDonut.vue component, rendering a D3 donut view. 
+3. a SplitDurationTable.vue component, rendering the current table
+4. a PieChart.vue component, rendering the split duration details as a pie or donut SVG chart.
 
 And then we would watch the renderStyle ref and use either the table or donut
 renderer, depending on what the user just choice. While we're at it, we should
@@ -28,7 +28,7 @@ and that's perfectly OK!
 
 <script setup lang="ts">
 
-import { computed } from 'vue';
+import { computed, ComputedRef } from 'vue';
 
 import type { FormatDurationOptions } from 'date-fns';
 import { 
@@ -42,8 +42,11 @@ import {
     intervalToDuration,
  } from 'date-fns';
 
-import type { Chron } from '../../data/chrontypes';
-import DonutDemo from '../routes/DonutDemo.vue';
+import type { Chron } from '../../data/chrontypes'; // TODO: move me to util/data!
+import type { Datum } from '../../util/data/types';
+
+//import DonutDemo from '../routes/DonutDemo.vue';
+import PieChart  from '../svg/PieChart.vue';
 
 const props = defineProps<{ 
     chron: Required<Chron>,
@@ -153,6 +156,34 @@ const daysTotal = computed(() =>{
     return differenceInCalendarDays(props.chron.end, props.chron.start);
 });
 
+// array of datums for the pie chart
+const durations:ComputedRef<Array<Datum>> = computed (() => {
+
+    const data = [
+        {   
+            category: 'done',
+            value: daysDone.value,
+            units: 'days',
+        },
+        {
+            category: 'now',
+            value: 1,
+            units: 'days',
+        },
+        {
+            category: 'left',
+            value: daysLeft.value,
+            units: 'days'
+        }
+    ];
+
+    return data;
+});
+
+const chartTitle = computed(() => {
+    return `Durations as of ${nowStr.value}`;
+});
+
 
 </script>
 
@@ -206,7 +237,7 @@ export default {
 
         <!-- table style: refactor me to a component -->
         <table :class="$style.unitTable" v-if="renderStyle==='table'">
-            <caption>Durations as of {{ nowStr }}</caption>
+            <caption>{{ chartTitle }}</caption>
             <tr>
                 <th scope="col">Units</th>
                 <th scope="col">Done</th>
@@ -241,7 +272,16 @@ export default {
 
         <!-- donut style; refactor me to a component -->
         <div v-if="renderStyle==='donut'">
-            <DonutDemo></DonutDemo>
+            <!--<DonutDemo></DonutDemo>-->
+            <PieChart 
+                :data="durations"
+                :diameter="404"
+                :offset="101"
+                :title="chartTitle"
+                :legend="false"
+                :height="600"
+                :width="800"
+            ></PieChart>
         </div>
     </div>
 </template>
