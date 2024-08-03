@@ -11,8 +11,9 @@ import type { ComputedRef } from 'vue';
 
 import PieSlice from '../svg/PieSlice.vue';
 import { toUnitData } from '../../util/data/math';
-import type { Datum, UnitDatum } from '../../util/data/types';
+import type { Datum, UnitDatum, StyleMap } from '../../util/data/types';
 import type { ArcDatum } from '../../util/svg/path';
+import { createStyleMap } from '../../util/svg/styles';
 import { degrees } from '../../util/trig/angles';
 import type { Point } from '../../util/trig/points';
 
@@ -33,6 +34,9 @@ export interface Props {
     // e.g. use an origin of 100, 100 to get a path centered in
     // an SVG with a viewBox of 0 0 200 200
     origin: Point,
+
+    // non-optional style map; deciding on styles is above our pay grade!
+    styles: StyleMap,
 };
 
 // both withDefaults and defineProps are compiler macros
@@ -55,9 +59,6 @@ const props = withDefaults(defineProps<Props>(), {
     },
 });
 
-const fillColors = ['skyblue', 'palegreen', 'pink', 'lightsalmon', 'mediumorchid'];
-const strokeColors = ['blue', 'green', 'red', 'darkorange', 'magenta'];
-
 // convert the raw data into angle-centric Unit Interval data
 const sliceData: ComputedRef<Array<ArcDatum>> = computed(() => {
     const { diameter, origin, offset } = props;
@@ -69,8 +70,11 @@ const sliceData: ComputedRef<Array<ArcDatum>> = computed(() => {
     // (n.b: we stick with degrees here, since those are the only units allowed for SVG rotations)
     const rotationSoFar = degrees(-90);
 
+    // stylemap for determining stroke, fill, etc
+    const { keyFn, styles } = createStyleMap(unitized);
+    
     // convert the raw scalar data above to ArcDatum instances
-    const arcData:Array<ArcDatum> = unitized.map((datum, idx) => {
+    const arcData:Array<ArcDatum> = unitized.map((datum) => {
 
         // percent of the circle that this datum takes up
         const percent = datum.I.percent(2);
@@ -93,6 +97,9 @@ const sliceData: ComputedRef<Array<ArcDatum>> = computed(() => {
             strokeWidth = 5;
         }
 
+        const key = keyFn(datum);
+        const style = styles[key];
+
         const arcDatum:ArcDatum = {
             angle,
             offset,
@@ -101,9 +108,12 @@ const sliceData: ComputedRef<Array<ArcDatum>> = computed(() => {
             rotation,
 
             // style info
-            fillColor: fillColors[idx],
-            strokeColor: strokeColors[idx],
-            strokeWidth,
+            fillColor: style.fillColor!,
+            strokeColor: style.strokeColor!,
+            strokeWidth: strokeWidth || style.strokeWidth,
+
+            // optional category
+            category: datum.category || 'uncategorized',
         };
 
         return arcDatum;
@@ -144,6 +154,7 @@ const getTransform = (slice: ArcDatum):string => {
                 :fillColor="slice.fillColor"
                 :strokeColor="slice.strokeColor"
                 :strokeWidth="slice.strokeWidth"
+                :data-category="slice.category"
             ></PieSlice>
         </g>
     </g>

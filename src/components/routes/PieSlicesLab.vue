@@ -8,7 +8,8 @@ import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 
 import PieSlices from '../svg/PieSlices.vue';
-import type { Datum } from '../../util/data/types';
+import type { Datum, StyleMap } from '../../util/data/types';
+import { createStyleMap } from '../../util/svg/styles';
 import type { Point } from '../../util/trig/points';
 
 // 3 arcs, 'alpha', 'beta', and 'gamma'
@@ -48,20 +49,28 @@ const origin:Point = {
 const data:ComputedRef<Array<Datum>> = computed(() => {
 
     return [
-        {
+        {   
+            category: 'done',
             value: aQuantity.value,
             units: 'days',
         },
         {
+            category: 'now',
             value: bQuantity.value,
             units: 'days',
         },
         {
+            category: 'left',
             value: gQuantity.value,
             units: 'days'
         }
     ];
 
+});
+
+const styleMap:ComputedRef<StyleMap> = computed(() => {
+    const map = createStyleMap(data.value);
+    return map;
 });
 
 </script>
@@ -103,6 +112,7 @@ const data:ComputedRef<Array<Datum>> = computed(() => {
                 :diameter="size"
                 :origin="origin"
                 :offset="offset"
+                :styles="styleMap"
             ></PieSlices>
             
         </svg>

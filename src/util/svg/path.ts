@@ -14,6 +14,9 @@ export type ArcDatum = {
     // magnitude of the angle itself, with a specified unit type!
     angle: Angle,
 
+    // completely optional category name
+    category?: string,
+
     className?: string,
 
     // valid css color string

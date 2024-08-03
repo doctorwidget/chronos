@@ -93,14 +93,20 @@ export type SvgStyle = {
     strokeWidth?: number,
 };
 
-/** something that an be plotted on some kind of chart */
-export type ChartItem = {
-    // the value to be plotted
-    datum: Datum | UnitDatum,
+/**
+ * A Key function is anything that extracts a key from a datum. 
+ * E.g. for a stylemap, the keyFn will commonly be d => d.category || 'unknown'
+ */
+export type KeyFn = (d: Datum) => string;
 
-    // a key which is unique within a set of ChartItems,
-    // (but not necessarily unique across a DOM document)
-    id: string,
+/** 
+ * An array of Datums might be accompanied by a stylemap.
+ * Different stylemaps can be swapped in and out without affecting the data. 
+ */
+export type StyleMap = {
+    // get the desired key from a Datum
+    keyFn: KeyFn,
 
-    style?: SvgStyle,
+    // after extracting a key from a Datum, look up the SvgStyle here
+    styles: Record<string, SvgStyle>,
 };
