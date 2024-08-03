@@ -33,6 +33,7 @@ const targetAge = defineModel({
     default: "62",
 });
 
+const date2027 = new Date('2027-02-27T12:00:00');
 const date2029 = new Date('2029-08-27T12:00:00');
 const date2032 = new Date('2032-08-27T12:00:00');
 
@@ -43,6 +44,8 @@ const targetDate = computed(() => {
         return date2029;
     } else if (age === "65") {
         return date2032;
+    } else if (age === "59.5"){
+        return date2027;
     }
 });
 
@@ -71,6 +74,9 @@ const chrons: Ref<Array<Chron>> = computed(() => {
         <div :class="$style.targetAge">
             <strong>Target Age: </strong>
             <span>
+                <input type="radio" id="a59" value="59.5" v-model.number="targetAge" />
+                <label for="a59">59.5</label>
+
                 <input type="radio" id="a62" value="62" v-model.number="targetAge" />
                 <label for="a62">62</label>
 
