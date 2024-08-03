@@ -3,10 +3,11 @@ import { createWebHashHistory, createRouter } from 'vue-router'
 import './assets/chrons.css';
 
 import App from './App.vue';
+import { routes } from './routes/routes';
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: [], // we add all routes inside App.vue
+  routes, 
 });
 
 

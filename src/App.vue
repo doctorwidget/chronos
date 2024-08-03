@@ -3,34 +3,21 @@
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { routes } from './routes/routes';
+
 /** inline our custom styles */
 import './assets/chrons.css';
-import Home from './components/routes/Home.vue';
-import DonutDemo from './components/routes/DonutDemo.vue';
-import PieSliceLab from './components/routes/PieSliceLab.vue'; 
-import PieSlicesLab from './components/routes/PieSlicesLab.vue';
 
+// this just gives us a reference to the singleton router
+// that singleton only exists because of code in ./main.ts, which see
 const router = useRouter();
-
-const routes = [
-  { path: '/', component: Home },
-  { path: '/home', component: Home },
-  { path: '/arc', component: PieSliceLab },
-  { path: '/arcs', component: PieSlicesLab },
-  { path: '/pie', component: DonutDemo },
-];
 
 /**
  * Set up all the routes mount
  */
 onMounted(() => {
-    for (const r of routes) {
-        router.addRoute(r);
-    };
-
-    // set a starting route
+    // set a default starting route
     router.replace(routes[0]);
-
 });
 </script>
 
