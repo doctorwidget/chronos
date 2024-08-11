@@ -28,6 +28,7 @@ onMounted(() => {
             <RouterLink :class="$style.navLink" data-navlink to="/arc">Arc</RouterLink>
             <RouterLink :class="$style.navLink" data-navlink to="/arcs">Arcs</RouterLink>
             <RouterLink :class="$style.navLink" data-navlink to="/pie">Donut</RouterLink>
+            <RouterLink :class="$style.navLink" data-navlink to="/drag">Drag</RouterLink>
         </nav>
         <main :class="$style.appMain">
             <RouterView />
