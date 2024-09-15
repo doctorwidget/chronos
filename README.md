@@ -1,5 +1,15 @@
 # TODO
 
+## Better vdraggable
+
+- take an option, e.g. `v-draggable.xy`
+    current default = `v-draggable.translate`
+- xy only works when applied to a <use>
+    so add a <defs>...<symbol>...</symbol></defs>
+    and a <use url="symbolID">...</use>
+    and apply v-draggable.xy to it
+    
+
 ## Clock demo page:
 
 - page component
