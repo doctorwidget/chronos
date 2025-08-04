@@ -113,15 +113,48 @@ const percent = computed(() => {
 });
 
 const yearsDone = computed (() => {
-    return differenceInCalendarYears(now, props.chron.start);
+    //return differenceInCalendarYears(now, props.chron.start);
+    let years = 0;
+    const d = durationDone.value;
+    if (d) {
+        const fullYears = d.years || 0;
+        const leftoverMonths = (d.months || 0) / 12;
+        const pctMonths = (Math.trunc(leftoverMonths * 100)) / 100;
+        const leftoverDays = (d.days || 0) / 365;
+        const pctDays = (Math.trunc(leftoverDays * 100)) / 100;
+        years = fullYears + pctMonths + pctDays;
+    }
+    return years;
 });
 
 const yearsLeft = computed(() => {
-    return differenceInCalendarYears(props.chron.end, now);
+    //return differenceInCalendarYears(props.chron.end, now);
+    let years = 0;
+    const d = durationLeft.value;
+    if (duration) {
+        const fullYears = d.years || 0;
+        const leftoverMonths = (d.months || 0) / 12;
+        const pctMonths = (Math.trunc(leftoverMonths * 100)) / 100;
+        const leftoverDays = (d.days || 0) / 365;
+        const pctDays = (Math.trunc(leftoverDays * 100)) / 100;
+        years = fullYears + pctMonths + pctDays;
+    }
+    return years;
 });
 
 const yearsTotal = computed(() =>{
-    return differenceInCalendarYears(props.chron.end, props.chron.start);
+    //return differenceInCalendarYears(props.chron.end, props.chron.start);
+    let years = 0;
+    const d = duration.value;
+    if (duration) {
+        const fullYears = d.years || 0;
+        const leftoverMonths = (d.months || 0) / 12;
+        const pctMonths = (Math.trunc(leftoverMonths * 100)) / 100;
+        const leftoverDays = (d.days || 0) / 365;
+        const pctDays = (Math.trunc(leftoverDays * 100)) / 100;
+        years = fullYears + pctMonths + pctDays;
+    }
+    return years;
 });
 
 const monthsDone = computed (() => {

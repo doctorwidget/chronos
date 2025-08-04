@@ -33,7 +33,7 @@ const targetAge = defineModel({
     default: "62",
 });
 
-const date2026 = new Date('2026-05-16T12:00:00');
+const date2027 = new Date('2027-02-27T12:00:00');
 const date2029 = new Date('2029-08-27T12:00:00');
 const date2032 = new Date('2032-08-27T12:00:00');
 
@@ -45,7 +45,7 @@ const targetDate = computed(() => {
     } else if (age === "65") {
         return date2032;
     } else if (age === "59"){
-        return date2026;
+        return date2027;
     }
 });
 
