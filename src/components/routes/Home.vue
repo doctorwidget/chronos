@@ -30,9 +30,12 @@ import ChronViews from '../../components/ChronViews.vue';
  * then you probably are not gaining anything by using v-model. 
  */
 const targetAge = defineModel({
-    default: "62",
+    default: "60",
 });
 
+const date10y = new Date('2026-05-17T12:00:00'); 
+const date59 = new Date('2026-08-27T12:00:00');
+const date59h = new Date('2027-02-27T12:00:00');
 const date2027 = new Date('2027-08-27T12:00:00');
 const date2029 = new Date('2029-08-27T12:00:00');
 const date2032 = new Date('2032-08-27T12:00:00');
@@ -46,6 +49,12 @@ const targetDate = computed(() => {
         return date2032;
     } else if (age === "60"){
         return date2027;
+    } else if (age === '10y') {// then 59, then 59 1/2, then remove
+        return date10y;
+    } else if (age === '59'){
+        return date59;
+    } else if (age === '59h') {
+        return date59h;
     }
 });
 
@@ -74,6 +83,15 @@ const chrons: Ref<Array<Chron>> = computed(() => {
         <div :class="$style.targetAge">
             <strong>Target Age: </strong>
             <span>
+                <input type="radio" id="10y" value="10y" v-model.number="targetAge" />
+                <label for="10y">10y</label>
+
+                <input type="radio" id="a59" value="59" v-model.number="targetAge" />
+                <label for="a59">59</label>
+
+                <input type="radio" id="a59h" value="59h" v-model.number="targetAge" />
+                <label for="a59h">59.5</label>
+
                 <input type="radio" id="a60" value="60" v-model.number="targetAge" />
                 <label for="a60">60</label>
 

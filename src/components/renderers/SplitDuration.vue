@@ -124,7 +124,7 @@ const yearsDone = computed (() => {
         const pctDays = (Math.trunc(leftoverDays * 100)) / 100;
         years = fullYears + pctMonths + pctDays;
     }
-    return years;
+    return years.toFixed(2);
 });
 
 const yearsLeft = computed(() => {
@@ -139,7 +139,7 @@ const yearsLeft = computed(() => {
         const pctDays = (Math.trunc(leftoverDays * 100)) / 100;
         years = fullYears + pctMonths + pctDays;
     }
-    return years;
+    return years.toFixed(2);
 });
 
 const yearsTotal = computed(() =>{
@@ -154,7 +154,7 @@ const yearsTotal = computed(() =>{
         const pctDays = (Math.trunc(leftoverDays * 100)) / 100;
         years = fullYears + pctMonths + pctDays;
     }
-    return years;
+    return years.toFixed(2);
 });
 
 const monthsDone = computed (() => {
@@ -170,11 +170,11 @@ const monthsTotal = computed(() =>{
 });
 
 const weeksDone = computed (() => {
-    return differenceInCalendarWeeks(now, props.chron.start);
+    return Math.round(differenceInCalendarDays(now, props.chron.start) / 7);
 });
 
 const weeksLeft = computed(() => {
-    return differenceInCalendarWeeks(props.chron.end, now);
+    return Math.round(differenceInCalendarDays(props.chron.end, now) / 7);
 });
 
 const weeksTotal = computed(() =>{
@@ -209,7 +209,7 @@ const durations:ComputedRef<Array<Datum>> = computed (() => {
         },
         {
             category: 'left',
-            value: daysLeft.value,
+            value: (daysLeft.value > 0) ? daysLeft.value : 0,
             units: 'days'
         }
     ];
